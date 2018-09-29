@@ -170,7 +170,8 @@
                     'sort',
                     'searchlist',
                     'search',
-                    'edit'
+                    'edit',
+                    'vercode'
                 ]
             }
         },
