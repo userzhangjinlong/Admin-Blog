@@ -35,9 +35,19 @@ export default new Router({
                     meta: { title: 'tab选项卡' }
                 },
                 {
+                    path: '/categoryAdd',
+                    component: resolve => require(['../components/page/BaseCategoryAdd.vue'], resolve),
+                    meta: { title: '分类添加' }
+                },
+                {
                     path: '/form',
                     component: resolve => require(['../components/page/BaseForm.vue'], resolve),
                     meta: { title: '基本表单' }
+                },
+                {
+                    path: '/article',
+                    component: resolve => require(['../components/page/BaseArticle.vue'], resolve),
+                    meta: { title: '添加文章' }
                 },
                 {
                     // 富文本编辑器组件

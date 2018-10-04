@@ -63,6 +63,14 @@
                                 title: '基本表单'
                             },
                             {
+                                index: 'categoryAdd',
+                                title: '分类添加'
+                            },
+                            {
+                                index: 'article',
+                                title: '添加文章'
+                            },
+                            {
                                 index: '3-2',
                                 title: '三级菜单',
                                 subs: [
