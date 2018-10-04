@@ -111,7 +111,7 @@
         name: 'dashboard',
         data() {
             return {
-                name: localStorage.getItem('ms_username'),
+                name: JSON.parse(localStorage.getItem('userinfo')).name,
                 todoList: [{
                         title: '今天要修复100个bug',
                         status: false,
@@ -188,7 +188,9 @@
         },
         computed: {
             role() {
-                return this.name === 'admin' ? '超级管理员' : '普通用户';
+                let userinfo = localStorage.getItem('userinfo');
+                userinfo = JSON.parse(userinfo);
+                return userinfo.name === 'admin' ? '超级管理员' : '普通用户';
             }
         },
         created(){

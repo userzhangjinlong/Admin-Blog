@@ -8,14 +8,15 @@ import 'element-ui/lib/theme-chalk/index.css';    // 默认主题
 import '../static/css/icon.css';
 import "babel-polyfill";
 import domain from './apiUrl.js';
-global.domain = domain;
+ global.domain = domain;
 
 Vue.use(ElementUI, { size: 'small' });
 Vue.prototype.$axios = axios;
 
 //使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {
-    const role = localStorage.getItem('ms_username');
+    // const role = localStorage.getItem('ms_username');
+    const role = localStorage.getItem('userinfo');
     if(!role && to.path !== '/login'){
         next('/login');
     }else if(to.meta.permission){

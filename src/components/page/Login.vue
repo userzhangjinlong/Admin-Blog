@@ -26,10 +26,10 @@
     </div>
 </template>
 <script>
+    // var url = domain.testUrl;
     export default {
         data: function(){
             return {
-                imgsrc:domain.testUrl,
                 ruleForm: {
                     username: '',
                     password: ''
@@ -52,18 +52,23 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         //验证成功 发起异步数据传输请求
-                        let url = domain.testUrl;
-                        this.$axios.get(url)
-                            .then(function (response) {
-                                console.log(response.data);
-                            })
-                            .catch(function (error) {
-                                console.log(error);
-                            });
-                        console.log('test');return false;
-                        localStorage.setItem('ms_username',this.ruleForm.username);
-                        this.$router.push('/');
+                         let url = domain.testUrl+'/login';
+                        console.log(url);
+                        this.$axios.post(url,{
+                            email:this.ruleForm.username,
+                            password:this.ruleForm.password,
+                            yzm:this.ruleForm.yzm
+                        }).then(function (response) {
+                            localStorage.setItem('userinfo',JSON.stringify(response.data.info));
+                            // this.$router.push('/');
+                            window.location.href = '/dashboard';
+                        }).catch(function (error) {
+                            alert(error.message);
+                            return false;
+                        });
+
                     } else {
+                        alert('error submit!!');
                         console.log('error submit!!');
                         return false;
                     }

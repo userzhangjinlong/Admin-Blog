@@ -56,7 +56,7 @@
         },
         computed:{
             username(){
-                let username = localStorage.getItem('ms_username');
+                let username = JSON.parse(localStorage.getItem('userinfo')).name;
                 return username ? username : this.name;
             }
         },
