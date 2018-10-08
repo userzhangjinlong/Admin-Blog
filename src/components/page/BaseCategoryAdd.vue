@@ -14,13 +14,11 @@
                     </el-form-item>
                     <el-form-item label="选择父级">
                         <el-select v-model="form.pid" placeholder="请选择">
-                            <el-option key="bbk" label="步步高" value="bbk"></el-option>
-                            <el-option key="xtc" label="小天才" value="xtc"></el-option>
-                            <el-option key="imoo" label="imoo" value="imoo"></el-option>
+                            <el-option key="0" label="一级分类" value="0"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item>
-                        <el-button type="primary" @click="onSubmit">添加文章</el-button>
+                        <el-button type="primary" @click="onSubmit('rules')">添加文章</el-button>
                         <el-button>取消</el-button>
                     </el-form-item>
                 </el-form>
@@ -51,10 +49,32 @@
         },
         methods: {
             onSubmit() {
-                // console.log(this.$refs);return false;
-                /*this.$refs[rules].validate((valid) => {*/
-                    console.log(this.form);
-                    this.$message.success('提交成功！');
+                 /*this.$refs[formName].validate((valid) => {*/
+                    let url = domain.testUrl+'/categoryAdd';
+                    /*if(valid){*/
+                        this.$axios.post(url,{
+                            name:this.form.name,
+                            pid:this.form.pid
+                        }).then(response => {
+                            console.log(response.data.code)
+                            if(response.data.code == 200){
+                                this.$message.success('添加成功！');
+                                //跳转分类列表
+                                /*setTimeout(function() {
+                                    window.location.href = '/BaseCategoryList';
+                                }, 2000);*/
+                            }else{
+                                this.$message.success(response.data.msg);
+                            }
+                            // resolve(response.data);
+                        }).catch((error) => {
+                            console.log(error)
+                            reject(error)
+                        });
+                    /*}else{
+                        this.$message.error('添加失败！');
+                        return false;
+                    }*/
                 /*});*/
 
             }

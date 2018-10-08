@@ -67,7 +67,11 @@
                                 title: '分类添加'
                             },
                             {
-                                index: 'article',
+                                index: 'categoryList',
+                                title: '分类列表'
+                            },
+                            {
+                                index: 'articleAdd',
                                 title: '添加文章'
                             },
                             {

@@ -53,7 +53,6 @@
                     if (valid) {
                         //验证成功 发起异步数据传输请求
                          let url = domain.testUrl+'/login';
-                        console.log(url);
                         this.$axios.post(url,{
                             email:this.ruleForm.username,
                             password:this.ruleForm.password,

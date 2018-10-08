@@ -15,8 +15,6 @@
                     <el-form-item label="分类">
                         <el-select v-model="form.cat" placeholder="请选择">
                             <el-option key="bbk" label="步步高" value="bbk"></el-option>
-                            <el-option key="xtc" label="小天才" value="xtc"></el-option>
-                            <el-option key="imoo" label="imoo" value="imoo"></el-option>
                         </el-select>
                     </el-form-item>
 
@@ -59,58 +57,6 @@
         name: 'baseform',
         data: function(){
             return {
-                options:[
-                    {
-                        value: 'guangdong',
-                        label: '广东省',
-                        children: [
-                            {
-                                value: 'guangzhou',
-                                label: '广州市',
-                                children: [
-                                    {
-                                        value: 'tianhe',
-                                        label: '天河区'
-                                    },
-                                    {
-                                        value: 'haizhu',
-                                        label: '海珠区'
-                                    }
-                                ]
-                            },
-                            {
-                                value: 'dongguan',
-                                label: '东莞市',
-                                children: [
-                                    {
-                                        value: 'changan',
-                                        label: '长安镇'
-                                    },
-                                    {
-                                        value: 'humen',
-                                        label: '虎门镇'
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        value: 'hunan',
-                        label: '湖南省',
-                        children: [
-                            {
-                                value: 'changsha',
-                                label: '长沙市',
-                                children: [
-                                    {
-                                        value: 'yuelu',
-                                        label: '岳麓区'
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ],
                 form: {
                     name: '',
                     cat: '',
@@ -134,10 +80,47 @@
                 }
             }
         },
+        computed: {
+            data() {
+                return this.tableData.filter((d) => {
+                    let is_del = false;
+                    for (let i = 0; i < this.del_list.length; i++) {
+                        if (d.name === this.del_list[i].name) {
+                            is_del = true;
+                            break;
+                        }
+                    }
+                    if (!is_del) {
+                        if (d.address.indexOf(this.select_cate) > -1 &&
+                            (d.name.indexOf(this.select_word) > -1 ||
+                                d.address.indexOf(this.select_word) > -1)
+                        ) {
+                            return d;
+                        }
+                    }
+                })
+            }
+        },
         components: {
             quillEditor
         },
+        mounted() {
+            this.getData();
+        },
         methods: {
+            // 获取分类数据
+            getData() {
+                // 开发环境使用 easy-mock 数据，正式环境使用 json 文件
+                /*if (process.env.NODE_ENV === 'development') {
+                    this.url = '/ms/table/list';
+                };*/
+                let url = domain.testUrl+'/categoryList';
+                this.$axios.get(url, {
+                }).then((res) => {
+                    console.log(res);return false;
+                    this.tableData = res.data.list;
+                })
+            },
             onSubmit() {
                 console.log(this.form);
                 this.$message.success('提交成功！');

@@ -40,13 +40,18 @@ export default new Router({
                     meta: { title: '分类添加' }
                 },
                 {
+                    path: '/categoryList',
+                    component: resolve => require(['../components/page/BaseCategoryList.vue'], resolve),
+                    meta: { title: '分类列表' }
+                },
+                {
                     path: '/form',
                     component: resolve => require(['../components/page/BaseForm.vue'], resolve),
                     meta: { title: '基本表单' }
                 },
                 {
-                    path: '/article',
-                    component: resolve => require(['../components/page/BaseArticle.vue'], resolve),
+                    path: '/articleAdd',
+                    component: resolve => require(['../components/page/BaseArticleAdd.vue'], resolve),
                     meta: { title: '添加文章' }
                 },
                 {
