@@ -8,30 +8,28 @@
         <div class="container">
             <div class="handle-box">
                 <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button>
-                <el-select v-model="select_cate" placeholder="筛选省份" class="handle-select mr10">
-                    <el-option key="1" label="广东省" value="广东省"></el-option>
-                    <el-option key="2" label="湖南省" value="湖南省"></el-option>
-                </el-select>
-                <el-input v-model="select_word" placeholder="筛选关键词" class="handle-input mr10"></el-input>
+                <el-input v-model="keyword" placeholder="筛选关键词" class="handle-input mr10"></el-input>
                 <el-button type="primary" icon="search" @click="search">搜索</el-button>
             </div>
+
             <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
-                <el-table-column prop="date" label="日期" sortable width="150">
+                <el-table-column prop="created_at" label="日期" sortable width="300">
                 </el-table-column>
-                <el-table-column prop="name" label="姓名" width="120">
+                <el-table-column prop="name" label="名称" width="240">
                 </el-table-column>
-                <el-table-column prop="address" label="地址" :formatter="formatter">
-                </el-table-column>
-                <el-table-column label="操作" width="180" align="center">
+                <!--<el-table-column prop="address" label="地址" :formatter="formatter">
+                </el-table-column>-->
+                <el-table-column label="操作" width="360" align="center">
                     <template slot-scope="scope">
                         <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                         <el-button type="text" icon="el-icon-delete" class="red" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
+
             <div class="pagination">
-                <el-pagination background @current-change="handleCurrentChange" layout="prev, pager, next" :total="1000">
+                <el-pagination background @current-change="handleCurrentChange" layout="prev, pager, next" :total="totalData">
                 </el-pagination>
             </div>
         </div>
@@ -39,16 +37,9 @@
         <!-- 编辑弹出框 -->
         <el-dialog title="编辑" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="50px">
-                <el-form-item label="日期">
-                    <el-date-picker type="date" placeholder="选择日期" v-model="form.date" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
-                </el-form-item>
-                <el-form-item label="姓名">
+                <el-form-item label="名称">
                     <el-input v-model="form.name"></el-input>
                 </el-form-item>
-                <el-form-item label="地址">
-                    <el-input v-model="form.address"></el-input>
-                </el-form-item>
-
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editVisible = false">取 消</el-button>
@@ -72,22 +63,21 @@
         name: 'basetable',
         data() {
             return {
-                url: './static/vuetable.json',
+                url: domain.testUrl+'/categoryListSx',
                 tableData: [],
                 cur_page: 1,
                 multipleSelection: [],
-                select_cate: '',
-                select_word: '',
+                keyword: '',
+                totalData:10,
                 del_list: [],
                 is_search: false,
                 editVisible: false,
                 delVisible: false,
                 form: {
                     name: '',
-                    date: '',
-                    address: ''
                 },
-                idx: -1
+                idx: -1,
+                ids: 0
             }
         },
         created() {
@@ -95,8 +85,10 @@
         },
         computed: {
             data() {
+
                 return this.tableData.filter((d) => {
                     let is_del = false;
+                    // console.log(d);
                     for (let i = 0; i < this.del_list.length; i++) {
                         if (d.name === this.del_list[i].name) {
                             is_del = true;
@@ -104,10 +96,7 @@
                         }
                     }
                     if (!is_del) {
-                        if (d.address.indexOf(this.select_cate) > -1 &&
-                            (d.name.indexOf(this.select_word) > -1 ||
-                                d.address.indexOf(this.select_word) > -1)
-                        ) {
+                        if ((d.name.indexOf(this.keyword) > -1)) {
                             return d;
                         }
                     }
@@ -123,13 +112,15 @@
             // 获取 easy-mock 的模拟数据
             getData() {
                 // 开发环境使用 easy-mock 数据，正式环境使用 json 文件
-                if (process.env.NODE_ENV === 'development') {
-                    this.url = '/ms/table/list';
-                };
+                /*if (process.env.NODE_ENV === 'development') {
+                    this.url = domain.testUrl+'/categoryList';
+                };*/
                 this.$axios.post(this.url, {
-                    page: this.cur_page
+                    page: this.cur_page,
+                    /*keyword:this.keyword,*/
                 }).then((res) => {
-                    this.tableData = res.data.list;
+                    this.tableData = res.data.list.data;
+                    this.totalData = (res.data.list.last_page)*10;
                 })
             },
             search() {
@@ -141,44 +132,86 @@
             filterTag(value, row) {
                 return row.tag === value;
             },
-            handleEdit(index, row) {
+            handleEdit(index, row) {console.log(row);
                 this.idx = index;
+                this.ids = row.id;
                 const item = this.tableData[index];
                 this.form = {
                     name: item.name,
-                    date: item.date,
-                    address: item.address
+                    created_at:row.created_at
                 }
                 this.editVisible = true;
             },
             handleDelete(index, row) {
                 this.idx = index;
+                this.ids = row.id;
                 this.delVisible = true;
             },
+            //批量删除
             delAll() {
                 const length = this.multipleSelection.length;
                 let str = '';
-                this.del_list = this.del_list.concat(this.multipleSelection);
+                let id_arr = [];
                 for (let i = 0; i < length; i++) {
+                    id_arr.push(this.multipleSelection[i].id);
                     str += this.multipleSelection[i].name + ' ';
                 }
-                this.$message.error('删除了' + str);
-                this.multipleSelection = [];
+                let url = domain.testUrl+'/categoryDelAll';
+                this.$axios.post(url, {
+                    id:id_arr
+                }).then((res) => {
+                    if(res.data.code == 200){
+                        this.$message.success('删除了' + str);
+                        this.multipleSelection = [];
+                        this.del_list = this.del_list.concat(this.multipleSelection);
+                    }else{
+                        //删除失败
+                        this.$message.error('删除失败');
+                        this.multipleSelection = [];
+                    }
+                })
+
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;
             },
             // 保存编辑
             saveEdit() {
-                this.$set(this.tableData, this.idx, this.form);
+                let url = domain.testUrl+'/categorySave';
+                this.$axios.post(url, {
+                    id:this.ids,
+                    name:this.form.name
+                }).then((res) => {
+                    console.log(this.form);
+                    if(res.data.code == 200){
+                        this.$message.success(`修改第 ${this.idx+1} 行成功`);
+                        this.$set(this.tableData, this.idx, this.form);
+                        this.editVisible = false;
+                    }else{
+                        this.$message.error(`修改第 ${this.idx+1} 行失败`);
+                        this.editVisible = false;
+                    }
+                })
+                /*this.$set(this.tableData, this.idx, this.form);
                 this.editVisible = false;
-                this.$message.success(`修改第 ${this.idx+1} 行成功`);
+                this.$message.success(`修改第 ${this.idx+1} 行成功`);*/
             },
             // 确定删除
             deleteRow(){
-                this.tableData.splice(this.idx, 1);
-                this.$message.success('删除成功');
-                this.delVisible = false;
+                let url = domain.testUrl+'/categoryDel';
+                this.$axios.post(url, {
+                    id:this.ids,
+                }).then((res) => {
+                    console.log(res);
+                    if(res.data.code == 200){
+                        this.tableData.splice(this.idx, 1);
+                        this.$message.success('删除成功');
+                        this.delVisible = false;
+                    }else{
+                        this.$message.error('删除失败');
+                        this.delVisible = false;
+                    }
+                })
             }
         }
     }
