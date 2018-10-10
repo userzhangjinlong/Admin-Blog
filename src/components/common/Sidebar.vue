@@ -75,6 +75,10 @@
                                 title: '添加文章'
                             },
                             {
+                                index: 'articleList',
+                                title: '文章列表'
+                            },
+                            {
                                 index: '3-2',
                                 title: '三级菜单',
                                 subs: [

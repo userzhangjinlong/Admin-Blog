@@ -55,6 +55,11 @@ export default new Router({
                     meta: { title: '添加文章' }
                 },
                 {
+                    path: '/articleList',
+                    component: resolve => require(['../components/page/BaseArticleList.vue'], resolve),
+                    meta: { title: '文章列表' }
+                },
+                {
                     // 富文本编辑器组件
                     path: '/editor',
                     component: resolve => require(['../components/page/VueEditor.vue'], resolve),
