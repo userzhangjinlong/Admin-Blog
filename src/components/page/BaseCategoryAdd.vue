@@ -18,7 +18,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item>
-                        <el-button type="primary" @click="onSubmit('rules')">添加文章</el-button>
+                        <el-button type="primary" @click="onSubmit('rules')">添加分类</el-button>
                         <el-button>取消</el-button>
                     </el-form-item>
                 </el-form>
