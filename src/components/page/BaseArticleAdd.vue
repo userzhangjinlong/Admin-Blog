@@ -99,8 +99,9 @@
                     ]
 
                 },
-                cateList:[],
+                articleDetail:[],
                 defaultSrc: './static/img/img.jpg',
+                urlid:this.$route.query.id,
             }
         },
         components: {
@@ -113,15 +114,15 @@
         methods: {
             // 获取分类数据
             getData() {
-                // 开发环境使用 easy-mock 数据，正式环境使用 json 文件
-                /*if (process.env.NODE_ENV === 'development') {
-                    this.url = '/ms/table/list';
-                };*/
-                let url = domain.testUrl+'/categoryList';
-                this.$axios.get(url, {
-                }).then((res) => {
-                    this.cateList = res.data.list;
-                })
+                if(this.urlid){
+                    let url = domain.testUrl+'/article/'+this.urlid;
+                    this.$axios.get(url, {
+                    }).then((res) => {
+                        console.log(res);
+                        this.articleDetail = res.data.list;
+                    })
+                }
+
             },
             onSubmit() {
                 let url = domain.testUrl+'/articleAdd';
@@ -133,7 +134,6 @@
                     description:this.form.description,
                     content:this.form.content,
                 }).then(response => {
-                    console.log(response.data.code)
                     if(response.data.code == 200){
                         this.$message.success('添加成功！');
                         //跳转分类列表
@@ -149,8 +149,6 @@
                     reject(error)
                 });
 
-                console.log(this.form);
-                this.$message.success('提交成功！');
             }
         }
     }

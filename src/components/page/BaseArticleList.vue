@@ -142,7 +142,9 @@
             handleEdit(index, row) {
                 /*this.idx = index;
                 this.ids = row.id;*/
-                this.$router.push({name: 'articleAdd',params:{ id:row.id}});
+                this.$router.push({path: '../../articleAdd', query: {id: row.id}});
+                // window.location.href='/articleAdd/id/'+row.id;
+                // this.$router.push('/BaseArticleAdd.vue');
 
                 /*const item = this.tableData[index];*/
                 /*this.form = {
