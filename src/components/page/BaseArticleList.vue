@@ -101,6 +101,8 @@
                     }
                     if (!is_del) {
                         if ((d.title.indexOf(this.keyword) > -1)) {
+                            d.cat_name = d.category.name;
+                            d.cat_id = d.category.id;
                             return d;
                         }
                     }
@@ -136,15 +138,18 @@
             filterTag(value, row) {
                 return row.tag === value;
             },
-            handleEdit(index, row) {console.log(row);
-                this.idx = index;
-                this.ids = row.id;
-                const item = this.tableData[index];
-                this.form = {
+            //编辑页面跳转
+            handleEdit(index, row) {
+                /*this.idx = index;
+                this.ids = row.id;*/
+                this.$router.push({name: 'articleAdd',params:{ id:row.id}});
+
+                /*const item = this.tableData[index];*/
+                /*this.form = {
                     name: item.name,
                     created_at:row.created_at
                 }
-                this.editVisible = true;
+                this.editVisible = true;*/
             },
             handleDelete(index, row) {
                 this.idx = index;
@@ -158,9 +163,9 @@
                 let id_arr = [];
                 for (let i = 0; i < length; i++) {
                     id_arr.push(this.multipleSelection[i].id);
-                    str += this.multipleSelection[i].name + ' ';
+                    str += this.multipleSelection[i].title + ' ';
                 }
-                let url = domain.testUrl+'/categoryDelAll';
+                let url = domain.testUrl+'/articleDelAll';
                 this.$axios.post(url, {
                     id:id_arr
                 }).then((res) => {
@@ -202,7 +207,7 @@
             },
             // 确定删除
             deleteRow(){
-                let url = domain.testUrl+'/categoryDel';
+                let url = domain.testUrl+'/articleDel';
                 this.$axios.post(url, {
                     id:this.ids,
                 }).then((res) => {
