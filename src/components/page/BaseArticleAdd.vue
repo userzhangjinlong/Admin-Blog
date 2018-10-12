@@ -21,7 +21,7 @@
 
 
                     <!--<div class="plugins-tips">
-                        vue-cropperjs：一个封装了 cropperjs 的 Vue 组件。
+vue-cropperjs：一个封装了 cropperjs 的 Vue 组件。
                         访问地址：<a href="https://github.com/Agontuk/vue-cropperjs" target="_blank">vue-cropperjs</a>
                     </div>
                     <div class="crop-demo">
@@ -44,11 +44,12 @@
                     <el-form-item label="描述内容">
                         <el-input type="textarea" rows="5" v-model="form.description"></el-input>
                     </el-form-item>
+                    <el-input type="hidden" v-model="form.id"></el-input>
                     <el-form-item label="详情">
                     </el-form-item>
                     <el-form-item class="container" style="width:200%">
                         <!--<div class="plugins-tips">
-                            Vue-Quill-Editor：基于Quill、适用于Vue2的富文本编辑器。
+Vue-Quill-Editor：基于Quill、适用于Vue2的富文本编辑器。
                             访问地址：<a href="https://github.com/surmon-china/vue-quill-editor" target="_blank">vue-quill-editor</a>
                         </div>-->
                         <quill-editor ref="myTextEditor" v-model="form.content" ></quill-editor>
@@ -99,7 +100,7 @@
                     ]
 
                 },
-                articleDetail:[],
+                cateList:[],
                 defaultSrc: './static/img/img.jpg',
                 urlid:this.$route.query.id,
             }
@@ -115,27 +116,38 @@
             // 获取分类数据
             getData() {
                 if(this.urlid){
-                    let url = domain.testUrl+'/article/'+this.urlid;
-                    this.$axios.get(url, {
+                    let url = domain.testUrl+'/articleDetail';
+                    this.$axios.post(url, {
+                        id:this.urlid
                     }).then((res) => {
-                        console.log(res);
-                        this.articleDetail = res.data.list;
+                        this.form.title = res.data.title;
+                        this.form.cat_id = res.data.cat_id;
+                        this.form.img_url = res.data.img_url;
+                        this.form.description = res.data.description;
+                        this.form.content = res.data.content;
+                        this.form.id = res.data.id;
                     })
                 }
 
+                let url = domain.testUrl+'/categoryList';
+                this.$axios.get(url, {
+                }).then((res) => {
+                    this.cateList = res.data.list;
+                })
             },
             onSubmit() {
-                let url = domain.testUrl+'/articleAdd';
+                let url = domain.testUrl+'/articleSave';
 
                 this.$axios.post(url,{
+                    id:this.form.id,
                     title:this.form.title,
                     cat_id:this.form.cat_id,
-                    img_url:this.form.img_url,
+                    // img_url:'',
                     description:this.form.description,
                     content:this.form.content,
                 }).then(response => {
                     if(response.data.code == 200){
-                        this.$message.success('添加成功！');
+                        this.$message.success('修改成功！');
                         //跳转分类列表
                         /*setTimeout(function() {
                             window.location.href = '/BaseCategoryList';
