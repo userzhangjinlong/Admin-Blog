@@ -60,7 +60,7 @@
                         }).then(function (response) {
                             localStorage.setItem('userinfo',JSON.stringify(response.data.info));
                             // this.$router.push('/');
-                            window.location.href = '/dashboard';
+                            window.location.href = '/#/dashboard';
                         }).catch(function (error) {
                             alert(error.message);
                             return false;
